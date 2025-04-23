@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.notificationsService.dto.NotificationDTO
 import com.notificationsService.service.NotificationsService
 import jakarta.jms.Message
-import jakarta.jms.ObjectMessage
 import jakarta.jms.TextMessage
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.messaging.simp.SimpMessagingTemplate
@@ -24,14 +23,15 @@ class NotificationListener(private val notificationsService: NotificationsServic
             val json = textMessage.text
             val dto: NotificationDTO = objectMapper.readValue(json)
 
-            println("✅ JSON recibido y parseado: $dto")
+            println("JSON received and parsed: $dto")
             val savedNotification = notificationsService.createNotification(dto)
 
+            //WebSocket
             val destination = "/user/${savedNotification.userId}/queue/notifications"
             messagingTemplate.convertAndSend(destination, savedNotification)
 
         } catch (ex: Exception) {
-            println("❌ ERROR procesando mensaje JSON: ${ex.message}")
+            println("Error processing JSON: ${ex.message}")
             ex.printStackTrace()
         }
     }
