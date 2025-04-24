@@ -9,7 +9,4 @@ interface NotificationRepository : JpaRepository<Notification, Long> {
 
     fun findAllByUserIdOrderByTimeDesc(userId: Long): List<Notification>
 
-    fun countByUserIdAndIsReadFalse(userId: Long): Long
-
-
 }
